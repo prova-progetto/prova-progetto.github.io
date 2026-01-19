@@ -68,15 +68,11 @@ points.forEach(p => {
 });
 
 // Funzione per aprire il menu a tendina
-// Funzione per aprire il menu a tendina
 function openDropdown() {
   if (puntiDropdown && !puntiDropdown.classList.contains('active')) {
-    // Usa il metodo del toggle che hai già definito
     if (typeof toggleDropdown === 'function') {
-      // Se esiste una funzione globale per aprire il dropdown
       toggleDropdown();
     } else {
-      // Altrimenti, simula il click sul toggle
       const event = new MouseEvent('click', {
         view: window,
         bubbles: true,
@@ -89,35 +85,28 @@ function openDropdown() {
 
 // Funzione per aggiornare le distanze nei bottoni
 function updateDistancesInButtons(userLat, userLng) {
-  // Raccoglie tutti i bottoni dei punti
   const puntoButtons = document.querySelectorAll('.punto-btn');
   
-  // Calcola distanze per ogni punto
   const distances = points.map(p => {
     const dist = map.distance([userLat, userLng], [p.lat, p.lng]);
     return { ...p, distance: dist };
   });
   
-  // Trova il punto più vicino
   const nearestPoint = distances.reduce((prev, current) => 
     (prev.distance < current.distance) ? prev : current
   );
   
-  // Aggiorna ogni bottone
   puntoButtons.forEach(button => {
     const url = button.getAttribute('href');
     const punto = distances.find(p => p.url === url);
     
     if (punto) {
-      // Rimuovi eventuali span di distanza esistenti
       const existingDistance = button.querySelector('.distanza-punto');
       if (existingDistance) existingDistance.remove();
       
-      // Aggiungi la distanza
       const distanceSpan = document.createElement('span');
       distanceSpan.className = 'distanza-punto';
       
-      // Formatta la distanza
       let distanceText;
       if (punto.distance > 999) {
         distanceText = (punto.distance / 1000).toFixed(1) + ' km';
@@ -127,16 +116,13 @@ function updateDistancesInButtons(userLat, userLng) {
       
       distanceSpan.textContent = distanceText;
       
-      // Aggiungi dopo l'emoji
       const emojiSpan = button.querySelector('.icona-emoji');
       if (emojiSpan) {
         emojiSpan.parentNode.insertBefore(distanceSpan, emojiSpan.nextSibling);
       }
       
-      // Rimuovi eventuali evidenziazioni precedenti
       button.classList.remove('punto-vicino');
       
-      // Evidenzia il punto più vicino
       if (punto.url === nearestPoint.url) {
         button.classList.add('punto-vicino');
       }
@@ -146,21 +132,17 @@ function updateDistancesInButtons(userLat, userLng) {
 
 // Funzione per aggiornare la posizione dell'utente
 function updateUserPosition(position) {
-<<<<<<< HEAD
   const lat = position.coords.latitude;
   const lng = position.coords.longitude;
   const acc = position.coords.accuracy;
   
   currentPosition = { lat, lng };
   
-  // Aggiorna lo stato del GPS
   gpsStatus.textContent = "Localizzazione attiva";
   gpsStatus.classList.add('active');
   
-  // Centra la mappa sulla posizione dell'utente
   map.setView([lat, lng], 16);
   
-  // Aggiorna o crea il marker dell'utente
   if (!userMarker) {
     userMarker = L.marker([lat, lng], { icon: userIcon })
       .addTo(map)
@@ -169,53 +151,27 @@ function updateUserPosition(position) {
     userMarker.setLatLng([lat, lng]);
   }
   
-  // Aggiorna o crea il cerchio di accuratezza
   if (!accuracyCircle) {
     accuracyCircle = L.circle([lat, lng], { 
       radius: acc, 
       color: "green", 
       fillOpacity: 0.15 
     }).addTo(map);
-=======
-  const lat = position.coords.latitude, lng = position.coords.longitude, acc = position.coords.accuracy;
-  
-  if (!userMarker) {
-    // Prima volta: crea marker e centra la mappa
-    userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map).bindPopup("🟢 Sei qui");
-    map.setView([lat, lng], 16);
-  } else {
-    // Aggiornamenti successivi: solo sposta il marker
-    userMarker.setLatLng([lat, lng]);
-  }
-  
-  if (!accuracyCircle) {
-    accuracyCircle = L.circle([lat, lng], { radius: acc, color: "green", fillOpacity: 0.15 }).addTo(map);
->>>>>>> 238879a511239cb62935d7481819cac6195f9681
   } else {
     accuracyCircle.setLatLng([lat, lng]).setRadius(acc);
   }
   
-<<<<<<< HEAD
-  // Apri il menu a tendina se non è già aperto
   openDropdown();
-  
-  // Aggiorna le distanze nei bottoni
   updateDistancesInButtons(lat, lng);
-  
-  // Evidenzia il punto più vicino sulla mappa
-=======
->>>>>>> 238879a511239cb62935d7481819cac6195f9681
   highlightNearestPoint(lat, lng);
 }
 
 // Funzione per evidenziare il punto più vicino sulla mappa
 function highlightNearestPoint(userLat, userLng) {
-  // Rimuovi evidenziazione precedente
   if (nearestMarker) {
     nearestMarker.setIcon(new L.Icon.Default());
   }
   
-  // Trova il punto più vicino
   let nearest = null;
   let minDistance = Infinity;
   
@@ -228,7 +184,6 @@ function highlightNearestPoint(userLat, userLng) {
   });
   
   if (nearest) {
-    // Trova il marker corrispondente
     map.eachLayer(layer => {
       if (layer instanceof L.Marker && layer.getLatLng) {
         const latlng = layer.getLatLng();
@@ -252,7 +207,6 @@ function startTracking() {
   gpsStatus.textContent = "📍 Cercando la tua posizione...";
   gpsBtn.disabled = true;
   
-  // Prima richiesta immediata
   navigator.geolocation.getCurrentPosition(
     (position) => {
       updateUserPosition(position);
@@ -265,7 +219,6 @@ function startTracking() {
     { enableHighAccuracy: true, timeout: 10000 }
   );
   
-  // Continua a seguire la posizione
   watchId = navigator.geolocation.watchPosition(
     updateUserPosition,
     handleGeolocationError,
@@ -321,11 +274,9 @@ function stopTracking() {
   gpsStatus.classList.remove('active');
   currentPosition = null;
   
-  // Rimuovi le distanze dai bottoni
   const distanceSpans = document.querySelectorAll('.distanza-punto');
   distanceSpans.forEach(span => span.remove());
   
-  // Rimuovi evidenziazione punti
   const puntoButtons = document.querySelectorAll('.punto-btn');
   puntoButtons.forEach(btn => btn.classList.remove('punto-vicino'));
 }
@@ -343,5 +294,5 @@ if (gpsBtn) {
   });
 }
 
-// Avvia automaticamente il GPS al caricamento della pagina (opzionale)
+// Opzionale: avvia automaticamente il GPS al caricamento della pagina
 // window.addEventListener('load', startTracking);

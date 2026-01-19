@@ -70,12 +70,9 @@ points.forEach(p => {
 // Function to open the dropdown menu
 function openDropdown() {
   if (puntiDropdown && !puntiDropdown.classList.contains('active')) {
-    // Use the toggle method you already defined
     if (typeof toggleDropdown === 'function') {
-      // If a global function exists to open the dropdown
       toggleDropdown();
     } else {
-      // Otherwise, simulate a click on the toggle
       const event = new MouseEvent('click', {
         view: window,
         bubbles: true,
@@ -105,7 +102,26 @@ function updateDistancesInButtons(userLat, userLng) {
   // Update each button
   puntoButtons.forEach(button => {
     const url = button.getAttribute('href');
-    const punto = distances.find(p => p.url === url);
+    
+    // Try to find matching point
+    let punto = distances.find(p => p.url === url);
+    
+    // If not found, try to match by ID
+    if (!punto) {
+      const buttonId = button.dataset.id || button.id;
+      if (buttonId) {
+        punto = distances.find(p => p.id === buttonId);
+      }
+    }
+    
+    // If still not found, try to match by title or partial URL
+    if (!punto) {
+      const buttonText = button.textContent.toLowerCase();
+      punto = distances.find(p => 
+        p.title.toLowerCase().includes(buttonText) || 
+        buttonText.includes(p.id)
+      );
+    }
     
     if (punto) {
       // Remove any existing distance spans
@@ -126,10 +142,12 @@ function updateDistancesInButtons(userLat, userLng) {
       
       distanceSpan.textContent = distanceText;
       
-      // Add after the emoji
+      // Try to add after the emoji or at the end of the button
       const emojiSpan = button.querySelector('.icona-emoji');
       if (emojiSpan) {
         emojiSpan.parentNode.insertBefore(distanceSpan, emojiSpan.nextSibling);
+      } else {
+        button.appendChild(distanceSpan);
       }
       
       // Remove any previous highlights
