@@ -2480,7 +2480,7 @@ body:not(.fonts-loaded) .site-header .subtitle {
         to bottom,
         rgba(0, 0, 0, 0.25),
         rgba(0, 0, 0, 0.45)
-      ), url('../sfondo-mobile.jpg');
+      ), url('../sfondo.jpg');
     
     /* Se non esiste una versione mobile, usa quella standard ma con compressione */
     background-size: cover;
