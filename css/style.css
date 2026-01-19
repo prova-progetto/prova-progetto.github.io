@@ -120,8 +120,7 @@ a:hover::after {
   background: var(--glass);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(212, 196, 168, 0.3);
-  position: sticky;
-  top: 0;
+  position: relative; /* o "static" se vuoi il posizionamento normale */
   z-index: 1000;
   box-shadow: 0 4px 20px rgba(93, 64, 55, 0.05);
 }
@@ -2293,4 +2292,238 @@ body:not(.fonts-loaded) .site-header .subtitle {
     100% {
         box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
     }
+}
+
+/* ===================== MOBILE OPTIMIZATION PER HERO SECTION ===================== */
+
+@media (max-width: 767px) {
+  
+  /* Hero Section ottimizzata per mobile */
+  .hero-section {
+    height: 85vh; /* Altezza leggermente ridotta su mobile */
+    min-height: 600px; /* Altezza minima per evitare che sia troppo corta */
+    padding: 4rem 1rem 6rem; /* Più spazio in basso per i bottoni */
+    background-position: center center;
+    background-attachment: scroll; /* Migliora le performance su mobile */
+  }
+
+  /* Dissolvenza più pronunciata su mobile */
+  .hero-section::after {
+    height: 180px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(255, 255, 255, 0.9) 90%
+    );
+  }
+
+  /* Titolo principale - versione mobile ottimizzata */
+  .hero-title {
+    font-size: 2.2rem !important; /* Più grande ma non enorme */
+    line-height: 1.15 !important;
+    margin: 0.5rem 0 1.2rem 0 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    padding: 0 10px; /* Padding laterale per non toccare i bordi */
+    word-wrap: break-word;
+    hyphens: auto; /* Suddivisione automatica delle parole lunghe */
+  }
+
+  /* Sottotitolo hero */
+  .hero-subtitle {
+    font-size: 0.9rem !important;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.3rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Descrizione hero */
+  .hero-description {
+    font-size: 1rem !important;
+    line-height: 1.5;
+    padding: 0 15px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 2rem;
+  }
+
+  /* Bottoni hero - disposizione verticale su mobile */
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    padding: 0 20px;
+    width: 100%;
+  }
+
+  /* Singolo bottone hero */
+  .hero-btn {
+    width: 100% !important;
+    max-width: 280px;
+    padding: 0.9rem 1.5rem;
+    font-size: 0.95rem;
+    text-align: center;
+    margin: 0 auto;
+    border-width: 1.5px; /* Bordi più spessi per visibilità */
+    background: rgba(0, 0, 0, 0.2); /* Leggero sfondo per contrasto */
+    backdrop-filter: blur(5px); /* Effetto vetro sfuocato */
+    -webkit-backdrop-filter: blur(5px);
+  }
+
+  /* Pulsante scorrimento giù - più piccolo su mobile */
+  .scroll-down-btn {
+    bottom: 25px;
+    width: 42px;
+    height: 42px;
+    font-size: 1.2rem;
+    border-width: 1.5px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+
+  /* Animazione pulsazione più leggera su mobile */
+  @keyframes pulse-mobile {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+  }
+  
+  .scroll-down-btn {
+    animation: pulse-mobile 2s infinite;
+  }
+  
+  /* Migliora la leggibilità del testo su sfondo complesso */
+  .hero-section .container {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Assicura che l'immagine di sfondo si adatti bene */
+  .hero-section {
+    background-size: cover;
+    background-position: center 30%; /* Sposta l'inquadratura verso l'alto */
+  }
+}
+
+/* Ottimizzazioni per schermi molto piccoli (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .hero-section {
+    height: 80vh;
+    min-height: 550px;
+    padding: 3rem 0.8rem 5rem;
+  }
+
+  .hero-title {
+    font-size: 1.9rem !important;
+    padding: 0 8px;
+  }
+
+  .hero-description {
+    font-size: 0.95rem !important;
+    padding: 0 10px;
+  }
+
+  .hero-btn {
+    max-width: 250px;
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .scroll-down-btn {
+    width: 38px;
+    height: 38px;
+    bottom: 20px;
+  }
+}
+
+/* Tablet ottimizzazioni */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .hero-section {
+    height: 90vh;
+    min-height: 700px;
+    padding: 6rem 2rem;
+  }
+
+  .hero-title {
+    font-size: 3rem !important;
+    line-height: 1.2;
+  }
+
+  .hero-description {
+    font-size: 1.2rem !important;
+    max-width: 80%;
+  }
+
+  .hero-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-btn {
+    min-width: 180px;
+  }
+}
+
+/* ===================== FIX PER IMMAGINE DI SFONDO PERFORMANTE ===================== */
+
+/* Evita che l'immagine di sfondo consumi troppe risorse su mobile */
+@media (max-width: 767px) {
+  .hero-section {
+    /* Versione ottimizzata per mobile */
+    background-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.25),
+        rgba(0, 0, 0, 0.45)
+      ), url('../sfondo-mobile.jpg');
+    
+    /* Se non esiste una versione mobile, usa quella standard ma con compressione */
+    background-size: cover;
+    background-repeat: no-repeat;
+    
+    /* Prevenire il ridimensionamento durante lo scroll su iOS */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* ===================== LOADING GRADIENT FALLBACK ===================== */
+
+/* Mostra un gradiente mentre l'immagine carica */
+.hero-section.loading {
+  background: linear-gradient(135deg, var(--gradient-dark), #3e2723);
+}
+
+/* ===================== ACCESSIBILITÀ MOBILE ===================== */
+
+/* Migliora il contrasto per lettura all'aperto */
+@media (max-width: 767px) {
+  .hero-title {
+    font-weight: 500; /* Leggermente più spesso per contrasto */
+  }
+  
+  /* Aggiungi un leggero sfondo scuro dietro il testo per contrasto */
+  .hero-section .container > *:not(.scroll-down-btn) {
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* Opzionale: aggiungi un overlay leggero su tutto il contenuto per contrasto */
+  .hero-section .container::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -20px;
+    right: -20px;
+    bottom: -50px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    z-index: 1;
+    pointer-events: none;
+  }
 }
