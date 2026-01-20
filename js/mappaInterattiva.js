@@ -67,19 +67,25 @@ points.forEach(p => {
   marker.pointId = p.id;
 });
 
-// Funzione per aprire il menu a tendina
+// Funzione per aprire il menu a tendina e calcolare l'altezza corretta
 function openDropdown() {
   if (puntiDropdown && !puntiDropdown.classList.contains('active')) {
-    if (typeof toggleDropdown === 'function') {
-      toggleDropdown();
-    } else {
-      const event = new MouseEvent('click', {
-        view: window,
-        bubbles: true,
-        cancelable: true
-      });
-      puntiToggle.dispatchEvent(event);
-    }
+    // Apri il dropdown
+    puntiDropdown.classList.add('active');
+    puntiToggle.classList.add('active');
+    
+    // Calcola l'altezza necessaria dopo che il contenuto è stato renderizzato
+    setTimeout(() => {
+      const grid = document.querySelector('.punti-grid');
+      if (grid) {
+        // Calcola l'altezza totale della griglia
+        const gridHeight = grid.scrollHeight;
+        // Aggiungi il padding del dropdown (top + bottom)
+        const dropdownPadding = 50 + 30; // 50px top + 30px bottom
+        // Imposta l'altezza massima
+        puntiDropdown.style.maxHeight = `${gridHeight + dropdownPadding + 50}px`;
+      }
+    }, 50); // Piccolo delay per assicurarsi che il contenuto sia renderizzato
   }
 }
 
@@ -87,26 +93,32 @@ function openDropdown() {
 function updateDistancesInButtons(userLat, userLng) {
   const puntoButtons = document.querySelectorAll('.punto-btn');
   
+  // Calcola tutte le distanze
   const distances = points.map(p => {
     const dist = map.distance([userLat, userLng], [p.lat, p.lng]);
     return { ...p, distance: dist };
   });
   
+  // Trova il punto più vicino
   const nearestPoint = distances.reduce((prev, current) => 
     (prev.distance < current.distance) ? prev : current
   );
   
-  puntoButtons.forEach(button => {
+  // Aggiorna ogni bottone
+  puntoButtons.forEach((button) => {
     const url = button.getAttribute('href');
     const punto = distances.find(p => p.url === url);
     
     if (punto) {
+      // Rimuovi eventuali distanze esistenti
       const existingDistance = button.querySelector('.distanza-punto');
       if (existingDistance) existingDistance.remove();
       
+      // Crea il nuovo elemento distanza
       const distanceSpan = document.createElement('span');
       distanceSpan.className = 'distanza-punto';
       
+      // Formatta la distanza
       let distanceText;
       if (punto.distance > 999) {
         distanceText = (punto.distance / 1000).toFixed(1) + ' km';
@@ -116,18 +128,49 @@ function updateDistancesInButtons(userLat, userLng) {
       
       distanceSpan.textContent = distanceText;
       
-      const emojiSpan = button.querySelector('.icona-emoji');
-      if (emojiSpan) {
-        emojiSpan.parentNode.insertBefore(distanceSpan, emojiSpan.nextSibling);
+      // Inserisci la distanza dopo l'etichetta o il sottotitolo
+      const etichetta = button.querySelector('.etichetta-punto');
+      const sottotitolo = button.querySelector('.sottotitolo');
+      
+      if (etichetta) {
+        etichetta.after(distanceSpan);
+      } else if (sottotitolo) {
+        sottotitolo.after(distanceSpan);
+      } else {
+        const titolo = button.querySelector('.titolo-principale');
+        if (titolo) titolo.after(distanceSpan);
       }
       
+      // Gestisci l'evidenziazione del punto più vicino
       button.classList.remove('punto-vicino');
+      
+      // Rimuovi eventuali indicatori precedenti
+      const oldIndicator = button.querySelector('.piu-vicino-indicator');
+      if (oldIndicator) oldIndicator.remove();
       
       if (punto.url === nearestPoint.url) {
         button.classList.add('punto-vicino');
+        
+        // Aggiungi indicatore "Più vicino"
+        const indicator = document.createElement('span');
+        indicator.className = 'piu-vicino-indicator';
+        indicator.textContent = '📍 Più vicino';
+        button.appendChild(indicator);
       }
     }
   });
+  
+  // Ricalcola l'altezza del dropdown dopo aver aggiunto le distanze
+  setTimeout(() => {
+    if (puntiDropdown.classList.contains('active')) {
+      const grid = document.querySelector('.punti-grid');
+      if (grid) {
+        const gridHeight = grid.scrollHeight;
+        const dropdownPadding = 50 + 30;
+        puntiDropdown.style.maxHeight = `${gridHeight + dropdownPadding + 50}px`;
+      }
+    }
+  }, 100);
 }
 
 // Funzione per aggiornare la posizione dell'utente
